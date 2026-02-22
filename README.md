@@ -1,11 +1,13 @@
+# ML Early Warning System
 
-  # ML Early Warning System
+Machine Learning-based web application that predicts early software project failure risks using Random Forest and XGBoost.
 
-  This is a code bundle for ML Early Warning System. The original project is available at https://www.figma.com/design/GSOwCgjqKwNZglMqtlBDYT/ML-Early-Warning-System.
+## Tech Stack
+- Python
+- Flask
+- React
+- Tailwind CSS
+- Machine Learning
 
-  ## Running the code
-
-  Run `npm i` to install the dependencies.
-
-  Run `npm run dev` to start the development server.
-  
+## Accuracy
+92.4%
