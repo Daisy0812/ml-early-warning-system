@@ -1,0 +1,51 @@
+# Docker Compose configuration for full stack deployment
+version: '3.8'
+
+services:
+  # PostgreSQL Database
+  db:
+    image: postgres:15-alpine
+    environment:
+      POSTGRES_DB: early_warning_db
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres_password
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Flask Backend API
+  api:
+    build: .
+    environment:
+      - FLASK_ENV=production
+      - SECRET_KEY=your-production-secret-key
+      - JWT_SECRET_KEY=your-production-jwt-secret
+      - DATABASE_URL=postgresql://postgres:postgres_password@db:5432/early_warning_db
+      - GITHUB_TOKEN=${GITHUB_TOKEN}
+    ports:
+      - "5000:5000"
+    depends_on:
+      db:
+        condition: service_healthy
+    volumes:
+      - ./:/app
+    command: sh -c "sleep 5 && flask init-db && gunicorn -w 4 -b 0.0.0.0:5000 app:app"
+
+  # Frontend (optional - if you want to run frontend in Docker too)
+  # frontend:
+  #   build:
+  #     context: ../
+  #     dockerfile: Dockerfile.frontend
+  #   ports:
+  #     - "3000:3000"
+  #   depends_on:
+  #     - api
+
+volumes:
+  postgres_data:
